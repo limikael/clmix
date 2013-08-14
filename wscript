@@ -9,13 +9,11 @@ def configure(cnf):
 	if cnf.options.debug:
 		cnf.env.append_value("CFLAGS",["-DDEBUG"])
 
-	cnf.check(
-		features='c cprogram', 
-		lib=[
-			'avcodec', 'avformat', 'iconv', 'm', 'mp3lame', 'bz2', 'z', 'm', 'avutil', 'jansson'
-		],
-		uselib_store='AV'
-	)
+	#cnf.check(features='c cprogram')
+	cnf.check(lib="gd",uselib_store="GD")
+	cnf.check(lib="jansson",uselib_store="JANSSON")
+	cnf.check_cfg(package="libavcodec",uselib_store="AVCODEC",args='--cflags --libs')
+	cnf.check_cfg(package="libavformat",uselib_store="AVFORMAT",args='--cflags --libs')
 
 def build(bld):
 	bld(
@@ -31,6 +29,6 @@ def build(bld):
 			'src/audiosource_vol.c',	'src/ladspa_default.c'
 		],
 		target='clmix',
-		use=['AV'],
+		use=['JANSSON','GD','AVCODEC','AVFORMAT'],
 		includes='extern/ffsnd/src'
 	)
